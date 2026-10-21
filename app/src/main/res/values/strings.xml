@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LibreHU</string>
+    <string name="home_hint">Pair this phone with a head unit running LibreHU: scan the QR code shown on the head unit (LibreHU-service → Bluetooth → Phone → LibreHU phone app), or pair over Bluetooth if the phone is already paired with it. Then set the head unit and its LibreHU apps from here, and see its values in Android Auto.</string>
+    <string name="pair_qr">Scan the QR code</string>
+    <string name="pair_bt">Bluetooth</string>
+    <string name="pair_bt_hint">Head units already paired with this phone. The head unit asks to confirm.</string>
+    <string name="pair_bt_confirm">Confirm on the head unit</string>
+    <string name="pair_failed">Pairing failed: %1$s</string>
+    <string name="scan_prompt">QR code of LibreHU-service</string>
+    <string name="qr_not_librehu">This is not a LibreHU pairing QR code</string>
+    <string name="connecting">Connecting to %1$s…</string>
+    <string name="link_failed">Not connected: %1$s</string>
+    <string name="connected_via">Connected (%1$s)</string>
+    <string name="unit_fp">Fingerprint %1$s…</string>
+    <string name="dashboard">Car</string>
+    <string name="no_values">No values yet (OBD adapter off?)</string>
+    <string name="battery_line">Battery: %1$s</string>
+    <string name="confirm_action">Do it now?</string>
+    <string name="obd_speed">Speed</string>
+    <string name="obd_rpm">Engine speed</string>
+    <string name="obd_coolant">Coolant</string>
+    <string name="obd_oil">Oil</string>
+    <string name="obd_intake">Intake air</string>
+    <string name="obd_ambient">Outside air</string>
+    <string name="obd_load">Engine load</string>
+    <string name="obd_throttle">Throttle</string>
+    <string name="obd_fuel">Fuel</string>
+    <string name="obd_fuel_rate">Fuel rate</string>
+    <string name="obd_battery">Battery</string>
+    <string name="bat_charging">charging</string>
+    <string name="bat_not_charging">not charging</string>
+    <string name="bat_over">overvoltage</string>
+    <string name="car_no_unit">Pair a head unit in the LibreHU app on the phone first</string>
+    <string name="car_not_connected">Head unit not connected (same Wi-Fi or Bluetooth)</string>
+    <string name="car_quick">Quick settings</string>
+    <string name="car_on">On</string>
+    <string name="car_off">Off</string>
+</resources>

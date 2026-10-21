@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LibreHU</string>
+    <string name="home_hint">Associez ce téléphone à un autoradio LibreHU : scannez le QR code affiché par l\'autoradio (LibreHU-service → Bluetooth → Téléphone → Appli téléphone LibreHU), ou associez-le en Bluetooth s\'il est déjà appairé. Réglez ensuite l\'autoradio et ses applis LibreHU d\'ici, et voyez ses valeurs dans Android Auto.</string>
+    <string name="pair_qr">Scanner le QR code</string>
+    <string name="pair_bt">Bluetooth</string>
+    <string name="pair_bt_hint">Autoradios déjà appairés avec ce téléphone. L\'autoradio demande de confirmer.</string>
+    <string name="pair_bt_confirm">Confirmez sur l\'autoradio</string>
+    <string name="pair_failed">Association impossible : %1$s</string>
+    <string name="scan_prompt">QR code de LibreHU-service</string>
+    <string name="qr_not_librehu">Ce n\'est pas un QR code d\'association LibreHU</string>
+    <string name="connecting">Connexion à %1$s…</string>
+    <string name="link_failed">Non connecté : %1$s</string>
+    <string name="connected_via">Connecté (%1$s)</string>
+    <string name="unit_fp">Empreinte %1$s…</string>
+    <string name="dashboard">Voiture</string>
+    <string name="no_values">Pas encore de valeurs (adaptateur OBD éteint ?)</string>
+    <string name="battery_line">Batterie : %1$s</string>
+    <string name="confirm_action">Le faire maintenant ?</string>
+    <string name="obd_speed">Vitesse</string>
+    <string name="obd_rpm">Régime</string>
+    <string name="obd_coolant">Liquide de refroidissement</string>
+    <string name="obd_oil">Huile</string>
+    <string name="obd_intake">Air d\'admission</string>
+    <string name="obd_ambient">Air extérieur</string>
+    <string name="obd_load">Charge moteur</string>
+    <string name="obd_throttle">Papillon</string>
+    <string name="obd_fuel">Carburant</string>
+    <string name="obd_fuel_rate">Consommation</string>
+    <string name="obd_battery">Batterie</string>
+    <string name="bat_charging">en charge</string>
+    <string name="bat_not_charging">ne charge pas</string>
+    <string name="bat_over">surtension</string>
+    <string name="car_no_unit">Associez d\'abord un autoradio dans l\'appli LibreHU du téléphone</string>
+    <string name="car_not_connected">Autoradio non connecté (même Wi-Fi ou Bluetooth)</string>
+    <string name="car_quick">Réglages rapides</string>
+    <string name="car_on">Activé</string>
+    <string name="car_off">Désactivé</string>
+</resources>
