@@ -45,7 +45,10 @@ android {
     buildTypes {
         getByName("release") {
             signingConfig = if (librehuKey != null) signingConfigs.getByName("librehu") else signingConfigs.getByName("debug")
-            isMinifyEnabled = false
+            // Optimised by R8 (code and resources shrunk, without renaming: proguard-rules.pro).
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 

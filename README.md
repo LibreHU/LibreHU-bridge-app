@@ -53,3 +53,12 @@ n'apparaît dans Android Auto qu'avec **Sources inconnues** activé dans ses par
 signature LibreHU vient des secrets de la CI (`LIBREHU_KEYSTORE_B64`), sinon l'APK est signé avec la clé de debug.
 
 Bibliothèques : Jetpack Compose, Car App Library, kotlinx.serialization, zxing-android-embedded (Apache 2.0).
+
+## Optimisation (R8)
+
+L'APK publié par la CI (`assembleRelease`) est **optimisé par R8** : code et ressources réduits et optimisés, ce qui
+rend Jetpack Compose nettement plus fluide ([Compose performance](https://developer.android.com/develop/ui/compose/performance)),
+**sans renommage** (`-dontobfuscate` dans `app/proguard-rules.pro`) : les traces des journaux restent lisibles. Les
+règles gardent aussi ce qui n'est appelé que par son nom (méthodes natives, helpers root lancés par `app_process`). Si
+une fonction plante avec « class / method not found », regarder `usage.txt` dans l'artefact *R8 reports* de la CI (ce
+que R8 a retiré) et ajouter une règle `-keep`.
