@@ -3,7 +3,7 @@ name: Build
 on:
   push:
     branches: ["**"]
-    paths-ignore: ["**.md", "docs/**"]
+    paths-ignore: ["**.md", "docs/**", "ios/**", ".github/workflows/ios.yml"]
   pull_request:
     branches: [main]
   workflow_dispatch:

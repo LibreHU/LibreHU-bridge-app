@@ -1,0 +1,60 @@
+name: iOS
+
+# The iPhone app (ios/): built without signing, packed as an .ipa for sideloading (AltStore, Sideloadly… sign it with
+# your Apple ID), published as the rolling prerelease latest-ios.
+on:
+  push:
+    branches: ["**"]
+    paths: ["ios/**", ".github/workflows/ios.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: XcodeGen
+        run: brew install xcodegen
+
+      - name: Build (unsigned)
+        working-directory: ios
+        run: |
+          xcodegen generate
+          COUNT=$(git rev-list --count HEAD)
+          xcodebuild -project LibreHU.xcodeproj -scheme LibreHU -configuration Release -sdk iphoneos \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            CURRENT_PROJECT_VERSION=$COUNT MARKETING_VERSION="1.0.$COUNT" -quiet build
+
+      - name: Pack the .ipa
+        working-directory: ios
+        run: |
+          mkdir -p Payload
+          cp -R build/Build/Products/Release-iphoneos/LibreHU.app Payload/
+          zip -qr "LibreHU-iOS-${GITHUB_REF_NAME//\//-}.ipa" Payload
+          SHA=$(shasum -a 256 LibreHU-iOS-*.ipa | cut -d' ' -f1)
+          printf 'ipa=%s\nversionCode=%s\nversionName=1.0.%s-%s\nbranch=%s\ncommit=%s\nsha256=%s\n\n%s\n' \
+            "$(ls LibreHU-iOS-*.ipa)" "$(git rev-list --count HEAD)" "$(git rev-list --count HEAD)" "$GITHUB_REF_NAME" \
+            "$GITHUB_REF_NAME" "$(git rev-parse --short HEAD)" "$SHA" "$(git log -1 --format=%s)" > release-ios.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LibreHU-iOS-${{ github.sha }}
+          path: ios/LibreHU-iOS-*.ipa
+
+      - name: Rolling release latest-ios
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        working-directory: ios
+        run: |
+          TAG="latest-ios"
+          [ "$GITHUB_REF_NAME" = "main" ] || TAG="latest-ios-${GITHUB_REF_NAME//\//-}"
+          gh release delete "$TAG" --yes --cleanup-tag || true
+          gh release create "$TAG" --prerelease --target "$GITHUB_SHA" --title "LibreHU iOS ($GITHUB_REF_NAME)" \
+            --notes-file release-ios.txt LibreHU-iOS-*.ipa release-ios.txt

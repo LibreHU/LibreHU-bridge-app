@@ -5,3 +5,7 @@ local.properties
 .idea/
 *.iml
 !keystore/librehu.jks
+ios/build/
+ios/*.xcodeproj/
+ios/Payload/
+*.ipa
