@@ -53,6 +53,9 @@ enum Labels {
         case "org.librehu.easysource": return "EasySource"
         case "org.librehu.disc": return "Disc"
         case "org.librehu.ota": return "LibreHU Apps"
+        case "org.librehu.helper": return "Helper"
+        case "org.librehu.headunit": return "Android Auto"
+        case "org.librehu.carplay": return "CarPlay"
         case "com.llsl.viper4android": return "ViPER4Android"
         case let p: return p.components(separatedBy: ".").last ?? p
         }
@@ -71,6 +74,23 @@ enum Labels {
         case "gps": return "location.fill"
         case "speed": return "gauge.with.dots.needle.67percent"
         case "weather": return "sun.max.fill"
+        case "palette": return "paintpalette.fill"
+        case "image": return "photo.fill"
+        case "home": return "house.fill"
+        case "apps", "widgets": return "square.grid.2x2.fill"
+        case "clock": return "clock.fill"
+        case "lock": return "lock.fill"
+        case "sos": return "sos.circle.fill"
+        case "tire": return "exclamationmark.tirepressure"
+        case "radio": return "radio.fill"
+        case "keys": return "keyboard"
+        case "disc": return "opticaldisc"
+        case "download": return "arrow.down.circle.fill"
+        case "source": return "arrow.left.arrow.right"
+        case "report": return "doc.text.magnifyingglass"
+        case "equalizer": return "slider.vertical.3"
+        case "carplay": return "car.fill"
+        case "wifi": return "wifi"
         default: return "slider.horizontal.3"
         }
     }

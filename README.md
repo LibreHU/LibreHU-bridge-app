@@ -6,7 +6,9 @@ fastboot), récupère ses journaux, envoie et reçoit des fichiers, et met batte
 (réglages rapides compris).
 
 **C'est LibreHU-service (sur l'autoradio) qui décrit les pages de réglages** ; cette appli les dessine sans les
-connaître : un nouveau réglage arrive sans mise à jour du téléphone. Protocole et API :
+connaître : un nouveau réglage arrive sans mise à jour du téléphone. Pages de l'autoradio et de **toutes les applis LibreHU** :
+launcher, radio FM, téléphone, widgets, touches, sources, Disc, LibreHU Apps (mises à jour comprises), Helper,
+ViPER4Android (chaque effet et chaque paramètre) et CarPlay. Protocole et API :
 [LibreHU-service, docs/bridge.md](https://github.com/LibreHU/LibreHU-service/blob/main/docs/bridge.md).
 
 ## Télécharger

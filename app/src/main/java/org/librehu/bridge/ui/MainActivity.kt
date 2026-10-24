@@ -45,21 +45,42 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.VolumeDown
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Album
+import androidx.compose.material.icons.filled.Apps
+import androidx.compose.material.icons.filled.Assessment
 import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DirectionsCar
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Equalizer
+import androidx.compose.material.icons.filled.GpsFixed
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Keyboard
 import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.PhoneIphone
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.Radio
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
+import androidx.compose.material.icons.filled.Sos
 import androidx.compose.material.icons.filled.Speed
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.Thermostat
+import androidx.compose.material.icons.filled.TireRepair
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.filled.Tv
+import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material.icons.filled.WbSunny
+import androidx.compose.material.icons.filled.Widgets
+import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.LocalGasStation
@@ -110,6 +131,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
+import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -128,7 +150,6 @@ import org.librehu.bridge.data.HeadUnit
 import org.librehu.bridge.data.LinkState
 import org.librehu.bridge.data.PairingCode
 import org.librehu.bridge.data.Units
-import java.util.Locale
 
 /** Where the app is: the paired head units, one head unit, or one of its pages ([depth] for the slide direction). */
 private sealed class Nav(
@@ -588,6 +609,29 @@ internal fun pageIcon(name: String): ImageVector =
         "car" -> Icons.Default.DirectionsCar
         "weather" -> Icons.Default.WbSunny
         "phone" -> Icons.Outlined.Phone
+        "camera" -> Icons.Default.Videocam
+        "video" -> Icons.Default.Tv
+        "bluetooth" -> Icons.Default.Bluetooth
+        "gps" -> Icons.Default.GpsFixed
+        "speed" -> Icons.Default.Speed
+        "palette" -> Icons.Default.Palette
+        "image" -> Icons.Default.Image
+        "home" -> Icons.Default.Home
+        "apps" -> Icons.Default.Apps
+        "clock" -> Icons.Default.AccessTime
+        "lock" -> Icons.Default.Lock
+        "sos" -> Icons.Default.Sos
+        "tire" -> Icons.Default.TireRepair
+        "radio" -> Icons.Default.Radio
+        "widgets" -> Icons.Default.Widgets
+        "keys" -> Icons.Default.Keyboard
+        "disc" -> Icons.Default.Album
+        "download" -> Icons.Default.Download
+        "source" -> Icons.Default.SwapHoriz
+        "report" -> Icons.Default.Assessment
+        "equalizer" -> Icons.Default.Equalizer
+        "carplay" -> Icons.Default.PhoneIphone
+        "wifi" -> Icons.Default.Wifi
         else -> Icons.Default.Tune
     }
 
