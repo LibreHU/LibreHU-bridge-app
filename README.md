@@ -81,7 +81,14 @@ Interface Material 3 aux couleurs LibreHU (bleu, thème clair / sombre du télé
     system / secure / global, recherche, modifier, ajouter, supprimer ; les plus courants sont sur la page
     Autoradio), à propos (empreinte, API, root).
   Un LibreHU-service plus ancien (bridge niveau 1) n'a que les deux premiers onglets, avec un message.
-- Une page : interrupteurs, curseurs, choix, boutons (avec confirmation), informations, envoyés tout de suite.
+- Une page : interrupteurs, curseurs (valeur écrite comme sur l'autoradio : « +4 dB », « 2.5 s »), choix, champs
+  texte, boutons (avec confirmation), informations, envoyés tout de suite ; la page est relue après chaque
+  changement (les options qui dépendent d'une autre apparaissent). Le service publie **tous ses réglages** (audio,
+  véhicule, recul, vidéo, OBD, Bluetooth, Android Auto avec tous les réglages d'Open Headunit, CarPlay, écran,
+  lumières, système, GPS, Tweaks), voir
+  [docs/bridge.md](https://github.com/LibreHU/LibreHU-service/blob/main/docs/bridge.md).
+- Android Auto : réglages rapides des pages utiles en roulant (Autoradio, Audio, Écran, Lumières) et des applis
+  LibreHU.
 
 ## Compiler
 

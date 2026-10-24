@@ -22,12 +22,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -55,10 +62,13 @@ fun PageScreen(pageId: String) {
     val scope = rememberCoroutineScope()
     var items by remember { mutableStateOf<List<JsonObject>>(emptyList()) }
     var error by remember { mutableStateOf("") }
-    LaunchedEffect(pageId) {
-        runCatching { client.call("page", buildJsonObject { put("id", pageId) }) as JsonObject }
-            .onSuccess { p -> items = (p["items"] as? JsonArray).orEmpty().mapNotNull { it as? JsonObject } }
-            .onFailure { error = it.message ?: "" }
+    var revision by remember { mutableIntStateOf(0) }
+    LaunchedEffect(pageId, revision) {
+        runCatching { client.call("page", buildJsonObject { put("id", pageId) }, 30_000) as JsonObject }
+            .onSuccess { p ->
+                items = (p["items"] as? JsonArray).orEmpty().mapNotNull { it as? JsonObject }
+                error = ""
+            }.onFailure { error = it.message ?: "" }
     }
 
     fun send(
@@ -78,6 +88,8 @@ fun PageScreen(pageId: String) {
                 )
             }.onSuccess { r ->
                 (r as? JsonObject)?.let { updated -> items = items.map { if (it.s("id") == updated.s("id")) updated else it } }
+                // The whole page again: options that depend on this one (a mode, an on / off) appear or go.
+                revision++
             }.onFailure { error = it.message ?: "" }
         }
     }
@@ -127,10 +139,44 @@ private fun Item(
     when (item.s("type")) {
         "section" -> Text(label, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(top = 8.dp))
         "info" ->
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-                Text(value?.contentOrNull ?: "—", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+            if (value?.contentOrNull.isNullOrEmpty()) {
+                Text(label, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            } else {
+                Column(Modifier.fillMaxWidth()) {
+                    Text(label, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(value?.contentOrNull.orEmpty(), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+                }
             }
+        "text" -> {
+            var editing by remember { mutableStateOf(false) }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth().clip(MaterialTheme.shapes.small).clickable { editing = true },
+            ) {
+                Column(Modifier.weight(1f)) {
+                    Text(label)
+                    Text(value?.contentOrNull?.ifEmpty { "—" } ?: "—", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+                    if (hint.isNotEmpty()) Text(hint, style = MaterialTheme.typography.bodySmall)
+                }
+                Icon(Icons.Default.Edit, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            if (editing) {
+                val max = (item["max"] as? JsonPrimitive)?.intOrNull ?: 64
+                var text by remember { mutableStateOf(value?.contentOrNull.orEmpty()) }
+                AlertDialog(
+                    onDismissRequest = { editing = false },
+                    title = { Text(label) },
+                    text = { OutlinedTextField(value = text, onValueChange = { text = it.take(max) }, singleLine = true, modifier = Modifier.fillMaxWidth()) },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            editing = false
+                            send("set", JsonPrimitive(text))
+                        }) { Text(stringResource(android.R.string.ok)) }
+                    },
+                    dismissButton = { TextButton(onClick = { editing = false }) { Text(stringResource(android.R.string.cancel)) } },
+                )
+            }
+        }
         "switch" ->
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                 Column(Modifier.weight(1f)) {
@@ -147,8 +193,11 @@ private fun Item(
             Column {
                 Row(Modifier.fillMaxWidth()) {
                     Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-                    Text("${pos.toInt()} ${item.s("unit")}".trim(), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+                    // As the head unit writes it ("+4 dB", "2.5 s"), or the raw number while it moves.
+                    val shown = item.s("display").takeIf { it.isNotEmpty() && pos.toInt() == value?.intOrNull } ?: "${pos.toInt()} ${item.s("unit")}".trim()
+                    Text(shown, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
                 }
+                if (hint.isNotEmpty()) Text(hint, style = MaterialTheme.typography.bodySmall)
                 Slider(
                     value = pos,
                     onValueChange = { pos = (Math.round(it / step) * step).toFloat() },
@@ -161,6 +210,7 @@ private fun Item(
         "choice" ->
             Column {
                 Text(label)
+                if (hint.isNotEmpty()) Text(hint, style = MaterialTheme.typography.bodySmall)
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     (item["options"] as? JsonArray).orEmpty().mapNotNull { it as? JsonObject }.forEach { o ->
                         FilterChip(selected = value?.contentOrNull == o.s("v"), onClick = { send("set", JsonPrimitive(o.s("v"))) }, label = { Text(o.s("l")) })
@@ -169,12 +219,15 @@ private fun Item(
             }
         "button" -> {
             var ask by remember { mutableStateOf(false) }
-            FilledTonalButton(onClick = { if ((item["confirm"] as? JsonPrimitive)?.booleanOrNull == true) ask = true else send("action", null) }) { Text(label) }
+            Column {
+                FilledTonalButton(onClick = { if ((item["confirm"] as? JsonPrimitive)?.booleanOrNull == true) ask = true else send("action", null) }) { Text(label) }
+                if (hint.isNotEmpty() && (item["confirm"] as? JsonPrimitive)?.booleanOrNull != true) Text(hint, style = MaterialTheme.typography.bodySmall)
+            }
             if (ask) {
                 AlertDialog(
                     onDismissRequest = { ask = false },
                     title = { Text(label) },
-                    text = { Text(stringResource(R.string.confirm_action)) },
+                    text = { Text(hint.ifEmpty { stringResource(R.string.confirm_action) }) },
                     confirmButton = { TextButton(onClick = { ask = false; send("action", null) }) { Text(stringResource(android.R.string.ok)) } },
                     dismissButton = { TextButton(onClick = { ask = false }) { Text(stringResource(android.R.string.cancel)) } },
                 )

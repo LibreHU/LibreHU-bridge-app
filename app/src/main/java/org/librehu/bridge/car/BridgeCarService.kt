@@ -102,7 +102,10 @@ private class ValuesScreen(
     }
 }
 
-/** On / off settings of every page, as a grid: a touch switches it. */
+/** Service pages offered in Android Auto. */
+private val DRIVING = setOf("android", "audio", "display", "lights")
+
+/** On / off settings of the pages that matter while driving, as a grid: a touch switches it. */
 private class QuickScreen(
     context: CarContext,
 ) : Screen(context) {
@@ -117,8 +120,12 @@ private class QuickScreen(
         lifecycleScope.launch {
             toggles =
                 runCatching {
-                    (client.call("pages") as JsonArray).flatMap { p ->
-                        val id = ((p as JsonObject)["id"] as JsonPrimitive).content
+                    // Pages that matter while driving (the head unit, sound, screen, lights) and those of the other
+                    // LibreHU apps; the service's others (rear view setup, tweaks, Android Auto's own settings…) stay
+                    // on the phone's screen.
+                    (client.call("pages") as JsonArray).map { ((it as JsonObject)["id"] as JsonPrimitive).content }.filter { id ->
+                        !id.startsWith("org.librehu.service:") || id.substringAfter(':') in DRIVING
+                    }.flatMap { id ->
                         val page = client.call("page", buildJsonObject { put("id", id) }) as JsonObject
                         (page["items"] as? JsonArray).orEmpty().mapNotNull { it as? JsonObject }.filter { it.type() == "switch" }.map {
                             Triple(id, it, (it["value"] as? JsonPrimitive)?.booleanOrNull == true)
