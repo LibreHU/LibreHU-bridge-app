@@ -15,6 +15,30 @@ Dernière version (Android 8 et plus) :
 [LibreHU-Bridge-main.apk](https://github.com/LibreHU/LibreHU-bridge-app/releases/download/latest-main/LibreHU-Bridge-main.apk)
 — aussi en QR code dans l'assistant de premier démarrage de LibreHU Launcher.
 
+## iPhone (iOS 16 et plus)
+
+Même appli en SwiftUI (`ios/`), mêmes cinq onglets et même protocole (CryptoKit). Elle n'est pas sur l'App Store :
+la CI publie un **.ipa non signé** à installer soi-même :
+[LibreHU-iOS-main.ipa](https://github.com/LibreHU/LibreHU-bridge-app/releases/download/latest-ios/LibreHU-iOS-main.ipa)
+(empreinte SHA-256 dans `release-ios.txt` de la [release `latest-ios`](https://github.com/LibreHU/LibreHU-bridge-app/releases/tag/latest-ios)).
+
+- **Installer** avec [AltStore](https://faq.altstore.io/) ou [Sideloadly](https://sideloadly.io/) depuis un PC ou
+  un Mac : l'outil signe l'ipa avec votre identifiant Apple. Sur l'iPhone, activer **Mode développeur** (Réglages →
+  Confidentialité et sécurité), puis faire confiance au profil (Réglages → Général → VPN et gestion de l'appareil).
+- **Identifiant Apple gratuit** : l'appli doit être re-signée **tous les 7 jours** (AltStore le fait seul quand
+  AltServer tourne sur le même Wi-Fi) et 3 applis installées ainsi au plus. Un compte développeur payant donne un
+  an.
+- **Wi-Fi seulement** : iOS ne laisse pas une appli ouvrir une liaison série Bluetooth (RFCOMM) vers un accessoire
+  sans le programme MFi d'Apple. Associer par **QR code**, avec le téléphone et l'autoradio sur le même réseau ;
+  quand l'iPhone est le point d'accès, l'appli essaie aussi ses adresses (172.20.10.x). Pas d'équivalent
+  CarPlay pour l'instant : une appli CarPlay demande une autorisation (*entitlement*) accordée par Apple à un compte
+  développeur payant, impossible avec un ipa installé à la main.
+- iOS demande l'accès à la **caméra** (QR code) et au **réseau local** (joindre l'autoradio) : accepter les deux.
+- Compiler : `cd ios && xcodegen generate && xcodebuild -project LibreHU.xcodeproj -scheme LibreHU -sdk iphoneos
+  CODE_SIGNING_ALLOWED=NO build`
+  (Xcode 16, [XcodeGen](https://github.com/yonaskolb/XcodeGen)) ; la CI (`.github/workflows/ios.yml`) fait la même
+  chose sur macOS et publie `latest-ios`.
+
 ## Associer
 
 - **QR code** : sur l'autoradio, dans l'assistant de premier démarrage de LibreHU Launcher (*Afficher le QR code
