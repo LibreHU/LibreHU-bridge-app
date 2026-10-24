@@ -35,7 +35,7 @@ jobs:
         env:
           KEYSTORE_B64: ${{ secrets.LIBREHU_KEYSTORE_B64 }}
         run: |
-          # Without the secret the APK is signed with the debug key (no key in this repository).
+          # Without the secret the repository's keystore/librehu.jks signs the APK (app/build.gradle.kts).
           if [ -n "$KEYSTORE_B64" ]; then
             echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/librehu.jks"
             echo "LIBREHU_KEYSTORE=$RUNNER_TEMP/librehu.jks" >> "$GITHUB_ENV"

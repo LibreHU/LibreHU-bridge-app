@@ -28,23 +28,21 @@ android {
         versionCode = git("rev-list", "--count", "HEAD")?.toIntOrNull() ?: 1
         versionName = git("describe", "--tags", "--always", "--dirty", "--exclude", "latest-*", "--exclude", "build-*") ?: "dev"
     }
-    // The LibreHU signing key from the CI secrets (LIBREHU_KEYSTORE*) when set; no key in this repository, so a
-    // local build without it is signed with the debug key.
-    val librehuKey = System.getenv("LIBREHU_KEYSTORE")?.let { file(it) }?.takeIf { it.exists() }
+    // One signing key for every LibreHU app, so that updates install over each other: LIBREHU_KEYSTORE* from the CI
+    // secrets when set, else keystore/librehu.jks of the repository (public, like Android's debug key).
     signingConfigs {
-        if (librehuKey != null) {
-            create("librehu") {
-                storeFile = librehuKey
-                storePassword = System.getenv("LIBREHU_KEYSTORE_PASSWORD") ?: "librehu"
-                keyAlias = System.getenv("LIBREHU_KEY_ALIAS") ?: "librehu"
-                keyPassword = System.getenv("LIBREHU_KEY_PASSWORD") ?: "librehu"
-            }
+        create("librehu") {
+            storeFile = System.getenv("LIBREHU_KEYSTORE")?.let { file(it) } ?: rootProject.file("keystore/librehu.jks")
+            storePassword = System.getenv("LIBREHU_KEYSTORE_PASSWORD") ?: "librehu"
+            keyAlias = System.getenv("LIBREHU_KEY_ALIAS") ?: "librehu"
+            keyPassword = System.getenv("LIBREHU_KEY_PASSWORD") ?: "librehu"
         }
     }
 
     buildTypes {
+        getByName("debug") { signingConfig = signingConfigs.getByName("librehu") }
         getByName("release") {
-            signingConfig = if (librehuKey != null) signingConfigs.getByName("librehu") else signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("librehu")
             // Optimised by R8 (code and resources shrunk, without renaming: proguard-rules.pro).
             isMinifyEnabled = true
             isShrinkResources = true

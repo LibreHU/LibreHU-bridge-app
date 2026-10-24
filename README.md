@@ -65,7 +65,9 @@ Interface Material 3 aux couleurs LibreHU (bleu, thème clair / sombre du télé
 ## Compiler
 
 `./gradlew :app:assembleRelease` (JDK 17+, Android SDK). La CI publie `latest-main` à chaque push ; la clé de
-signature LibreHU vient des secrets de la CI (`LIBREHU_KEYSTORE_B64`), sinon l'APK est signé avec la clé de debug.
+signature LibreHU (la même pour toutes les applis LibreHU) est `keystore/librehu.jks`, ou celle des secrets de la CI
+(`LIBREHU_KEYSTORE_B64`) quand ils existent. Les versions publiées avant étaient signées avec une clé de debug qui
+changeait à chaque build : désinstaller une fois l'appli avant d'installer celle-ci (l'association est à refaire).
 
 Bibliothèques : Jetpack Compose, Car App Library, kotlinx.serialization, zxing-android-embedded (Apache 2.0).
 
