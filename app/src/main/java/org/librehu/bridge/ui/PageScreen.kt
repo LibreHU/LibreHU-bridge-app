@@ -81,9 +81,37 @@ fun PageScreen(pageId: String) {
             }.onFailure { error = it.message ?: "" }
         }
     }
-    LazyColumn(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        if (error.isNotEmpty()) item { Text(error, color = MaterialTheme.colorScheme.error) }
-        items(items, key = { it.s("id") }) { item -> Item(item) { m, v -> send(m, item, v) } }
+    // Items grouped by their sections, one card per group
+    val groups =
+        buildList<Pair<String, MutableList<JsonObject>>> {
+            for (it in items) {
+                if (it.s("type") == "section") {
+                    add(it.s("label") to mutableListOf())
+                } else {
+                    if (isEmpty()) add("" to mutableListOf())
+                    last().second += it
+                }
+            }
+        }.filter { it.second.isNotEmpty() }
+    LazyColumn(
+        Modifier.fillMaxSize(),
+        contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        if (error.isNotEmpty()) item { StatusBanner(error, false) }
+        if (items.isEmpty() && error.isEmpty()) {
+            item { androidx.compose.material3.LinearProgressIndicator(Modifier.fillMaxWidth()) }
+        }
+        groups.forEachIndexed { i, (title, list) ->
+            if (title.isNotEmpty()) item(key = "s$i") { SectionTitle(title) }
+            item(key = "g$i") {
+                androidx.compose.material3.Card(shape = MaterialTheme.shapes.large, modifier = Modifier.fillMaxWidth()) {
+                    Column(Modifier.padding(horizontal = 18.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                        for (item in list) Item(item) { m, v -> send(m, item, v) }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -98,7 +126,11 @@ private fun Item(
     val hint = item.s("hint")
     when (item.s("type")) {
         "section" -> Text(label, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(top = 8.dp))
-        "info" -> Column { Text(label, style = MaterialTheme.typography.labelLarge); Text(value?.contentOrNull ?: "—") }
+        "info" ->
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+                Text(value?.contentOrNull ?: "—", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+            }
         "switch" ->
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                 Column(Modifier.weight(1f)) {
@@ -113,7 +145,10 @@ private fun Item(
             val step = ((item["step"] as? JsonPrimitive)?.intOrNull ?: 1).coerceAtLeast(1)
             var pos by remember(value) { mutableFloatStateOf((value?.intOrNull ?: min).toFloat()) }
             Column {
-                Text("$label : ${pos.toInt()} ${item.s("unit")}")
+                Row(Modifier.fillMaxWidth()) {
+                    Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+                    Text("${pos.toInt()} ${item.s("unit")}".trim(), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+                }
                 Slider(
                     value = pos,
                     onValueChange = { pos = (Math.round(it / step) * step).toFloat() },

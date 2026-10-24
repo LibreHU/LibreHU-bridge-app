@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">LibreHU</string>
-    <string name="home_hint">Associez ce téléphone à un autoradio LibreHU : scannez le QR code affiché par l\'autoradio (LibreHU-service → Bluetooth → Téléphone → Appli téléphone LibreHU), ou associez-le en Bluetooth s\'il est déjà appairé. Réglez ensuite l\'autoradio et ses applis LibreHU d\'ici, et voyez ses valeurs dans Android Auto.</string>
-    <string name="pair_qr">Scanner le QR code</string>
+    <string name="home_hint">Réglez l\'autoradio LibreHU et ses applis depuis ce téléphone, et voyez la batterie et les valeurs OBD, ici et dans Android Auto.</string>
+    <string name="pair_qr">QR code</string>
     <string name="pair_bt">Bluetooth</string>
     <string name="pair_bt_hint">Autoradios déjà appairés avec ce téléphone. L\'autoradio demande de confirmer.</string>
     <string name="pair_bt_confirm">Confirmez sur l\'autoradio</string>
@@ -36,4 +36,33 @@
     <string name="car_quick">Réglages rapides</string>
     <string name="car_on">Activé</string>
     <string name="car_off">Désactivé</string>
+    <string name="welcome_title">Votre autoradio, dans votre poche</string>
+    <string name="step_1">Sur l\'autoradio : LibreHU-service → Bluetooth → Téléphone → Appli téléphone LibreHU</string>
+    <string name="step_2">Ici : scannez le QR code affiché (ou associez en Bluetooth)</string>
+    <string name="step_3">Même Wi-Fi (partage de connexion) ou Bluetooth : c\'est connecté</string>
+    <string name="your_units">Vos autoradios</string>
+    <string name="pair_title">Associer un autoradio</string>
+    <string name="pair_another">Associer un autre autoradio</string>
+    <string name="pair_qr_sub">Affiché par LibreHU-service</string>
+    <string name="pair_bt_sub">Déjà appairé à ce téléphone</string>
+    <string name="forget">Oublier</string>
+    <string name="forget_title">Oublier %1$s ?</string>
+    <string name="forget_text">Ce téléphone ne pourra plus s\'y connecter sans être associé à nouveau.</string>
+    <string name="retry">Réessayer</string>
+    <string name="battery">Batterie de la voiture</string>
+    <string name="battery_none">Pas de mesure (adaptateur OBD non connecté)</string>
+    <string name="live_values">En direct</string>
+    <string name="car_values">Valeurs constructeur</string>
+    <string name="media">Musique</string>
+    <string name="settings">Réglages</string>
+    <string name="copy">Copier</string>
+    <string name="copied">Copié</string>
+    <string name="aa_title">Android Auto</string>
+    <string name="aa_ok">Installée par Google Play : l\'appli apparaît dans le lanceur d\'Android Auto (catégorie « IoT »).</string>
+    <string name="aa_hidden">Android Auto ne l\'affichera pas : installée par « %1$s ». Une appli faite avec la bibliothèque Car App n\'apparaît que si elle vient d\'une source de confiance (Google Play), même avec les options développeur et « Sources inconnues » d\'Android Auto : ce réglage ne vaut que pour les applis média, messagerie et à l\'arrêt.</string>
+    <string name="aa_no_installer">aucun (fichier APK)</string>
+    <string name="aa_fix_root">Réinstaller comme Google Play (root)</string>
+    <string name="aa_root_failed">Échec : %1$s</string>
+    <string name="aa_adb">Sans root, depuis un ordinateur (désinstallez l\'appli d\'abord, puis) :</string>
+    <string name="aa_then">Ensuite : Android Auto → Personnaliser le lanceur, cochez LibreHU. L\'association avec l\'autoradio est perdue si vous désinstallez : refaites-la.</string>
 </resources>

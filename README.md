@@ -36,10 +36,25 @@ associés et peut les **oublier**.
 
 Écran **LibreHU** (Car App Library, catégorie IoT) : batterie de la voiture, vitesse, régime, liquide de
 refroidissement, carburant, huile, et **Réglages rapides** (tous les interrupteurs des pages de l'autoradio, en
-grille). Seuls les hôtes Android Auto signés par Google sont acceptés. Une appli installée hors Play Store
-n'apparaît dans Android Auto qu'avec **Sources inconnues** activé dans ses paramètres développeur.
+grille). Seuls les hôtes Android Auto signés par Google sont acceptés.
+
+**Pourquoi elle n'apparaît pas dans Android Auto** : une appli faite avec la Car App Library n'est listée que si elle
+vient d'une source de confiance comme Google Play. Le réglage développeur « Sources inconnues » d'Android Auto ne vaut
+que pour les applis média, messagerie et « à l'arrêt », pas pour celles de la Car App Library
+([developer.android.com, Test Android apps for cars](https://developer.android.com/training/cars/testing)).
+Android Auto regarde l'installateur enregistré pour l'appli : installée avec Google Play comme installateur, elle est
+listée (méthode communautaire, [aa4mg](https://github.com/sn-00-x/aa4mg) ; non garantie pour toutes les versions
+d'Android Auto). L'appli affiche son installateur actuel et propose :
+
+- avec root sur le téléphone : **Réinstaller comme Google Play** (`pm install -r -i com.android.vending`) ;
+- sans root, depuis un ordinateur, après avoir désinstallé l'appli :
+  `adb install -r -i com.android.vending LibreHU-Bridge-main.apk`.
+
+Puis Android Auto → Personnaliser le lanceur → cocher LibreHU. Désinstaller efface l'association : la refaire.
 
 ## Écrans
+
+Interface Material 3 aux couleurs LibreHU (bleu, thème clair / sombre du téléphone), transitions entre écrans.
 
 - Autoradios associés (oublier), association par QR code ou Bluetooth.
 - Un autoradio : état de la liaison (Wi-Fi / Bluetooth), voiture (batterie, OBD, valeurs constructeur), touches

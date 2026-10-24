@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">LibreHU</string>
-    <string name="home_hint">Pair this phone with a head unit running LibreHU: scan the QR code shown on the head unit (LibreHU-service → Bluetooth → Phone → LibreHU phone app), or pair over Bluetooth if the phone is already paired with it. Then set the head unit and its LibreHU apps from here, and see its values in Android Auto.</string>
-    <string name="pair_qr">Scan the QR code</string>
+    <string name="home_hint">Set the LibreHU head unit and its apps from this phone, and see the battery and OBD values, here and in Android Auto.</string>
+    <string name="pair_qr">QR code</string>
     <string name="pair_bt">Bluetooth</string>
     <string name="pair_bt_hint">Head units already paired with this phone. The head unit asks to confirm.</string>
     <string name="pair_bt_confirm">Confirm on the head unit</string>
@@ -36,4 +36,33 @@
     <string name="car_quick">Quick settings</string>
     <string name="car_on">On</string>
     <string name="car_off">Off</string>
+    <string name="welcome_title">Your head unit, in your pocket</string>
+    <string name="step_1">On the head unit: LibreHU-service → Bluetooth → Phone → LibreHU phone app</string>
+    <string name="step_2">Here: scan the QR code shown (or pair over Bluetooth)</string>
+    <string name="step_3">Same Wi-Fi (hotspot) or Bluetooth: connected</string>
+    <string name="your_units">Your head units</string>
+    <string name="pair_title">Pair a head unit</string>
+    <string name="pair_another">Pair another head unit</string>
+    <string name="pair_qr_sub">Shown by LibreHU-service</string>
+    <string name="pair_bt_sub">Already paired with this phone</string>
+    <string name="forget">Forget</string>
+    <string name="forget_title">Forget %1$s?</string>
+    <string name="forget_text">This phone will not connect to it any more unless it is paired again.</string>
+    <string name="retry">Retry</string>
+    <string name="battery">Car battery</string>
+    <string name="battery_none">No reading (OBD adapter not connected)</string>
+    <string name="live_values">Live</string>
+    <string name="car_values">Manufacturer values</string>
+    <string name="media">Music</string>
+    <string name="settings">Settings</string>
+    <string name="copy">Copy</string>
+    <string name="copied">Copied</string>
+    <string name="aa_title">Android Auto</string>
+    <string name="aa_ok">Installed by Google Play: the app shows in Android Auto\'s launcher ("IoT" category).</string>
+    <string name="aa_hidden">Android Auto will not show it: installed by "%1$s". An app made with the Car App Library only shows when it comes from a trusted source (Google Play), even with Android Auto\'s developer settings and "Unknown sources": that setting only covers media, messaging and parked apps.</string>
+    <string name="aa_no_installer">none (APK file)</string>
+    <string name="aa_fix_root">Reinstall as Google Play (root)</string>
+    <string name="aa_root_failed">Failed: %1$s</string>
+    <string name="aa_adb">Without root, from a computer (uninstall the app first, then):</string>
+    <string name="aa_then">Then: Android Auto → Customise launcher, tick LibreHU. Pairing with the head unit is lost when you uninstall: pair again.</string>
 </resources>
