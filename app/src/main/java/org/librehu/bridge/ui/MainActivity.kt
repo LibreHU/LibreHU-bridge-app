@@ -400,6 +400,7 @@ internal fun StatusBanner(
     text: String,
     ok: Boolean?,
     busy: Boolean = false,
+    modifier: Modifier = Modifier,
     action: (@Composable () -> Unit)? = null,
 ) {
     val c = MaterialTheme.colorScheme
@@ -410,7 +411,7 @@ internal fun StatusBanner(
             null -> c.surfaceContainerHigh
         }
     Row(
-        Modifier.fillMaxWidth().clip(MaterialTheme.shapes.medium).background(bg).padding(14.dp),
+        modifier.fillMaxWidth().clip(MaterialTheme.shapes.medium).background(bg).padding(14.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -478,107 +479,11 @@ private fun AndroidAutoCard() {
     }
 }
 
-// --- One head unit -------------------------------------------------------------------------------------------
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun UnitScreen(
-    unit: HeadUnit,
-    openPage: (String, String) -> Unit,
-) {
-    val context = LocalContext.current
-    val client = BridgeClient.get(context)
-    val scope = rememberCoroutineScope()
-    val state by client.state.collectAsStateWithLifecycle()
-    val values by client.values.collectAsStateWithLifecycle()
-    var pages by remember { mutableStateOf<List<Triple<String, String, String>>>(emptyList()) }
-    var attempt by remember { mutableIntStateOf(0) }
-    LaunchedEffect(unit.fingerprint, attempt) {
-        if (client.connect(unit)) {
-            pages =
-                runCatching {
-                    (client.call("pages") as JsonArray).map { p ->
-                        val o = p as JsonObject
-                        Triple(o.s("id"), o.s("title"), o.s("icon"))
-                    }
-                }.getOrDefault(emptyList())
-        }
-    }
-
-    fun key(a: String) {
-        scope.launch { runCatching { client.call("key", buildJsonObject { put("action", a) }) } }
-    }
-
-    LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        item {
-            when (val s = state) {
-                is LinkState.Connected -> StatusBanner(stringResource(R.string.connected_via, s.via), true)
-                is LinkState.Connecting -> StatusBanner(stringResource(R.string.connecting, s.name), null, busy = true)
-                is LinkState.Failed ->
-                    StatusBanner(stringResource(R.string.link_failed, s.message), false) {
-                        IconButton(onClick = { attempt++ }) { Icon(Icons.Default.Refresh, stringResource(R.string.retry)) }
-                    }
-                LinkState.Idle -> {}
-            }
-        }
-        item { BatteryCard(values?.get("battery") as? JsonObject) }
-        val obd = (values?.get("obd") as? JsonObject).orEmpty().filterKeys { it != "BATTERY" }
-        if (obd.isNotEmpty()) {
-            item { SectionTitle(stringResource(R.string.live_values)) }
-            item {
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    maxItemsInEachRow = 2,
-                ) {
-                    obd.forEach { (k, v) ->
-                        ValueTile(Labels.obd(context, k), Labels.format(k, (v as? JsonPrimitive)?.contentOrNull), iconFor(k), Modifier.weight(1f))
-                    }
-                }
-            }
-        }
-        val car = (values?.get("car") as? JsonObject).orEmpty()
-        if (car.isNotEmpty()) {
-            item { SectionTitle(stringResource(R.string.car_values)) }
-            item {
-                Card(shape = MaterialTheme.shapes.medium, modifier = Modifier.fillMaxWidth()) {
-                    Column(Modifier.padding(vertical = 6.dp)) {
-                        car.forEach { (k, v) ->
-                            ListItem(
-                                headlineContent = { Text(k.substringAfter('/')) },
-                                trailingContent = { Text((v as? JsonPrimitive)?.contentOrNull ?: "—", style = MaterialTheme.typography.titleMedium) },
-                                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                            )
-                        }
-                    }
-                }
-            }
-        }
-        if (state is LinkState.Connected) {
-            item { SectionTitle(stringResource(R.string.media)) }
-            item { MediaCard(::key) }
-        }
-        if (pages.isNotEmpty()) {
-            item { SectionTitle(stringResource(R.string.settings)) }
-            item {
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    maxItemsInEachRow = 2,
-                ) {
-                    pages.forEach { (id, title, icon) -> PageTile(title, pageIcon(icon), Modifier.weight(1f)) { openPage(id, title) } }
-                }
-            }
-        }
-        if (values == null && state is LinkState.Connected) {
-            item { Text(stringResource(R.string.no_values), color = MaterialTheme.colorScheme.onSurfaceVariant) }
-        }
-    }
-}
+// --- Shared pieces of the head unit's screens ------------------------------------------------------------------
 
 /** Car battery: an arc of its charge (engine off) or of its voltage, and what it is doing. */
 @Composable
-private fun BatteryCard(b: JsonObject?) {
+internal fun BatteryCard(b: JsonObject?) {
     val c = MaterialTheme.colorScheme
     val context = LocalContext.current
     val volts = (b?.get("voltage") as? JsonPrimitive)?.doubleOrNull
@@ -624,7 +529,7 @@ private fun BatteryCard(b: JsonObject?) {
 }
 
 @Composable
-private fun ValueTile(
+internal fun ValueTile(
     label: String,
     value: String,
     icon: ImageVector,
@@ -640,7 +545,7 @@ private fun ValueTile(
 }
 
 @Composable
-private fun MediaCard(key: (String) -> Unit) {
+internal fun MediaCard(key: (String) -> Unit) {
     Card(shape = MaterialTheme.shapes.large, modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Row(horizontalArrangement = Arrangement.spacedBy(20.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -658,7 +563,7 @@ private fun MediaCard(key: (String) -> Unit) {
 }
 
 @Composable
-private fun PageTile(
+internal fun PageTile(
     title: String,
     icon: ImageVector,
     modifier: Modifier,
@@ -675,7 +580,7 @@ private fun PageTile(
 }
 
 /** Icon of a page from the name the head unit gives. */
-private fun pageIcon(name: String): ImageVector =
+internal fun pageIcon(name: String): ImageVector =
     when (name) {
         "settings" -> Icons.Default.Settings
         "volume" -> Icons.AutoMirrored.Filled.VolumeUp
@@ -687,7 +592,7 @@ private fun pageIcon(name: String): ImageVector =
     }
 
 /** Icon of an OBD value. */
-private fun iconFor(key: String): ImageVector =
+internal fun iconFor(key: String): ImageVector =
     when {
         key == "SPEED" || key == "RPM" -> Icons.Default.Speed
         key.endsWith("_TEMP") -> Icons.Default.Thermostat
@@ -695,4 +600,4 @@ private fun iconFor(key: String): ImageVector =
         else -> Icons.Default.Tune
     }
 
-private fun JsonObject.s(k: String) = (this[k] as? JsonPrimitive)?.contentOrNull.orEmpty()
+internal fun JsonObject.s(k: String) = (this[k] as? JsonPrimitive)?.contentOrNull.orEmpty()

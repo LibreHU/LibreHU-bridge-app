@@ -61,4 +61,32 @@ object Labels {
             }
         return String.format(Locale.getDefault(), "%.1f V", v) + if (status.isNotEmpty()) " · $status" else ""
     }
+
+    /** Readable name of a thermal zone (`mtktscpu` → CPU, `battery`…); the zone's own name otherwise. */
+    fun thermal(type: String): String {
+        val t = type.lowercase()
+        return when {
+            "cpu" in t || "soc" in t -> "CPU"
+            "gpu" in t -> "GPU"
+            "pmic" in t -> "PMIC"
+            "bat" in t -> "Batt."
+            "ap" == t || "tsap" in t -> "AP"
+            "pa" in t && "pad" !in t -> "PA"
+            "board" in t || "pcb" in t -> "Board"
+            else -> type.removePrefix("mtkts").removePrefix("mtk")
+        }
+    }
+
+    /** Size in B, KB, MB, GB (powers of 1024). */
+    fun bytes(n: Long): String {
+        if (n < 1024) return "$n B"
+        val units = listOf("KB", "MB", "GB", "TB")
+        var v = n / 1024.0
+        var u = 0
+        while (v >= 1024 && u < units.size - 1) {
+            v /= 1024
+            u++
+        }
+        return String.format(java.util.Locale.getDefault(), if (v >= 100) "%.0f %s" else "%.1f %s", v, units[u])
+    }
 }

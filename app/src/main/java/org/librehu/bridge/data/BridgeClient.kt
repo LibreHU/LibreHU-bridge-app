@@ -179,6 +179,7 @@ class BridgeClient private constructor(
     suspend fun call(
         method: String,
         params: JsonObject = JsonObject(emptyMap()),
+        timeoutMs: Long = CALL_TIMEOUT_MS,
     ): JsonElement {
         val ch = channel ?: throw BridgeException("not connected")
         val id = ids.getAndIncrement()
@@ -194,7 +195,7 @@ class BridgeClient private constructor(
                     },
                 )
             }
-            val r = withTimeout(CALL_TIMEOUT_MS) { answer.await() }
+            val r = withTimeout(timeoutMs) { answer.await() }
             r["e"]?.let { throw BridgeException((it as? JsonPrimitive)?.contentOrNull ?: "error") }
             r["r"] ?: JsonPrimitive(true)
         } finally {

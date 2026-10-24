@@ -1,7 +1,9 @@
 # LibreHU (appli téléphone)
 
-Appli **téléphone** de LibreHU : règle l'autoradio et les applis LibreHU depuis le téléphone, montre la batterie et
-les valeurs OBD de la voiture, et les met dans **Android Auto** (réglages rapides compris).
+Appli **téléphone** de LibreHU : règle l'autoradio, les applis LibreHU et Android depuis le téléphone, montre la
+batterie, l'OBD, les températures et le GPS, lance les applis de l'autoradio, le redémarre (normal, recovery,
+fastboot), récupère ses journaux, envoie et reçoit des fichiers, et met batterie et OBD dans **Android Auto**
+(réglages rapides compris).
 
 **C'est LibreHU-service (sur l'autoradio) qui décrit les pages de réglages** ; cette appli les dessine sans les
 connaître : un nouveau réglage arrive sans mise à jour du téléphone. Protocole et API :
@@ -15,11 +17,13 @@ Dernière version (Android 8 et plus) :
 
 ## Associer
 
-- **QR code** : sur l'autoradio, LibreHU-service → Bluetooth → Téléphone → *Appli téléphone LibreHU* → *Associer un
-  téléphone* ; dans l'appli, *Scanner le QR code*. Le QR code contient l'empreinte de la clé de l'autoradio, un
+- **QR code** : sur l'autoradio, dans l'assistant de premier démarrage de LibreHU Launcher (*Afficher le QR code
+  d'association*) ou LibreHU-service → Bluetooth → Téléphone → *Appli téléphone LibreHU* → *Associer un
+  téléphone* ; dans l'appli, *Associer un autoradio* → *QR code*. Le QR code contient l'empreinte de la clé de l'autoradio, un
   jeton à usage unique (5 minutes), ses adresses Wi-Fi et Bluetooth.
 - **Bluetooth** : téléphone déjà appairé en Bluetooth avec l'autoradio → *Bluetooth* → choisir l'autoradio, puis
-  *Autoriser* sur l'autoradio.
+  *Autoriser* sur l'autoradio (notification, carte de LibreHU-service ou assistant de premier démarrage du
+  launcher).
 
 Ensuite l'appli se connecte seule : en **Wi-Fi** si le téléphone et l'autoradio sont sur le même réseau (point
 d'accès du téléphone ou de l'autoradio), sinon en **Bluetooth**.
@@ -57,9 +61,26 @@ Puis Android Auto → Personnaliser le lanceur → cocher LibreHU. Désinstaller
 Interface Material 3 aux couleurs LibreHU (bleu, thème clair / sombre du téléphone), transitions entre écrans.
 
 - Autoradios associés (oublier), association par QR code ou Bluetooth.
-- Un autoradio : état de la liaison (Wi-Fi / Bluetooth), voiture (batterie, OBD, valeurs constructeur), touches
-  (précédent, lecture, suivant, volume, muet), pages de réglages (Autoradio, Son LibreHU, Lumières, OBD et
-  batterie, et celles des autres applis LibreHU).
+- Un autoradio, en cinq onglets (barre du bas) :
+  - **Accueil** : batterie de la voiture (anneau de charge ou de tension), **GPS** comme sur le launcher (icône et
+    couleurs : recherche en jaune, position en vert ; satellites utilisés / visibles sur un anneau, chaque
+    constellation, barre de signal de chaque satellite, précision, vitesse, altitude, temps du premier fix ; le GPS
+    n'est écouté sur l'autoradio que pendant l'affichage ; **jamais la position**), **système** (température de
+    chaque sonde, la plus chaude en tête — le SoC —, en vert / jaune / rouge ; cœurs et fréquence, charge, durée de
+    fonctionnement, mémoire, stockage), valeurs OBD et constructeur, touches média ;
+  - **Réglages** : toutes les pages de LibreHU-service et de chaque appli LibreHU, rangées par appli, et une
+    **recherche dans tous les réglages** (toutes les pages lues à la première lettre) ;
+  - **Applis** : les applis de l'autoradio en grille avec leurs icônes, recherche, applis système en option ; un
+    appui l'ouvre sur l'autoradio ;
+  - **Fichiers** : stockage interne, clés USB / cartes SD (tout le système seulement si l'autoradio l'autorise, avec
+    un avertissement), dossiers d'abord ; enregistrer un fichier sur le téléphone (sélecteur d'Android), envoyer un
+    fichier du téléphone, renommer, supprimer, nouveau dossier ; transferts par blocs de 512 Kio avec progression,
+    annulables ;
+  - **Outils** : redémarrer (normal, recovery, fastboot, chacun confirmé), **journaux** (LibreHU, logcat complet,
+    noyau) écrits sur l'autoradio puis enregistrés sur le téléphone, **réglages Android avancés** (toutes les clés de
+    system / secure / global, recherche, modifier, ajouter, supprimer ; les plus courants sont sur la page
+    Autoradio), à propos (empreinte, API, root).
+  Un LibreHU-service plus ancien (bridge niveau 1) n'a que les deux premiers onglets, avec un message.
 - Une page : interrupteurs, curseurs, choix, boutons (avec confirmation), informations, envoyés tout de suite.
 
 ## Compiler
