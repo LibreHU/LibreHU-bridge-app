@@ -11,6 +11,14 @@ launcher, radio FM, téléphone, widgets, touches, sources, Disc, LibreHU Apps (
 ViPER4Android (chaque effet et chaque paramètre) et CarPlay. Protocole et API :
 [LibreHU-service, docs/bridge.md](https://github.com/LibreHU/LibreHU-service/blob/main/docs/bridge.md).
 
+## Captures d'écran
+
+| | |
+|---|---|
+| ![Écran principal](docs/screenshots/main.png)<br>Écran principal | ![Écran principal (2)](docs/screenshots/main-2.png)<br>Écran principal (2) |
+
+Captures sur l'émulateur Android 9 (1280×720, 160 dpi comme l'autoradio), sans autoradio branché : les valeurs du véhicule et de la MCU sont vides. Refaites-les avec l'action **Screenshots** de [LibreHU-OTA-app](https://github.com/LibreHU/LibreHU-OTA-app/tree/main/screenshots). Galerie : [librehu.github.io/screenshots/bridge.html](https://librehu.github.io/screenshots/bridge.html).
+
 ## Télécharger
 
 Dernière version (Android 8 et plus) :
