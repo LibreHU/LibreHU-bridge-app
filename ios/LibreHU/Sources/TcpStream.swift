@@ -65,6 +65,10 @@ final class TcpStream: ByteStream {
         }
     }
 
+    func enqueue(_ d: Data, done: @escaping (Error?) -> Void) {
+        connection.send(content: d, completion: .contentProcessed { error in done(error) })
+    }
+
     func close() { connection.cancel() }
 }
 

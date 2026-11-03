@@ -45,6 +45,15 @@
 "apps_system" = "System apps";
 "apps_search" = "Search an app";
 "apps_started" = "%@ opened on the head unit";
+"apps_screen" = "Head unit screen here";
+"apps_screen_hint" = "The head unit's screen on this iPhone, touched from here: for the passenger (Wi-Fi, root on the head unit).";
+"apps_open_unit" = "Open on the head unit";
+"apps_open_here" = "Open here";
+"screen_ended" = "Screen sharing ended";
+"screen_back" = "Back";
+"screen_home" = "Home";
+"screen_recents" = "Recent apps";
+"screen_close" = "Close";
 "files_internal" = "Internal storage";
 "files_root" = "Whole system (root)";
 "files_upload" = "Send a file";

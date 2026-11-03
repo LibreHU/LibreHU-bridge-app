@@ -45,6 +45,15 @@
 "apps_system" = "Applis système";
 "apps_search" = "Chercher une appli";
 "apps_started" = "%@ ouverte sur l'autoradio";
+"apps_screen" = "Écran de l'autoradio ici";
+"apps_screen_hint" = "L'écran de l'autoradio sur cet iPhone, à toucher d'ici : pour le passager (Wi-Fi, root sur l'autoradio).";
+"apps_open_unit" = "Ouvrir sur l'autoradio";
+"apps_open_here" = "Ouvrir ici";
+"screen_ended" = "Partage de l'écran terminé";
+"screen_back" = "Retour";
+"screen_home" = "Accueil";
+"screen_recents" = "Applis récentes";
+"screen_close" = "Fermer";
 "files_internal" = "Stockage interne";
 "files_root" = "Tout le système (root)";
 "files_upload" = "Envoyer un fichier";

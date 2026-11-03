@@ -27,7 +27,8 @@ Dernière version (Android 8 et plus) :
 
 ## iPhone (iOS 16 et plus)
 
-Même appli en SwiftUI (`ios/`), mêmes cinq onglets et même protocole (CryptoKit). Elle n'est pas sur l'App Store :
+Même appli en SwiftUI (`ios/`), mêmes cinq onglets et même protocole (CryptoKit), **écran de l'autoradio ici**
+compris (H.264 décodé par le matériel de l'iPhone, AVSampleBufferDisplayLayer). Elle n'est pas sur l'App Store :
 la CI publie un **.ipa non signé** à installer soi-même :
 [LibreHU-iOS-main.ipa](https://github.com/LibreHU/LibreHU-bridge-app/releases/download/latest-ios/LibreHU-iOS-main.ipa)
 (empreinte SHA-256 dans `release-ios.txt` de la [release `latest-ios`](https://github.com/LibreHU/LibreHU-bridge-app/releases/tag/latest-ios)).

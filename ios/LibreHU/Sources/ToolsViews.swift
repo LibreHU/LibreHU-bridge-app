@@ -98,27 +98,45 @@ enum Labels {
 
 // MARK: - Apps
 
-/// The head unit's apps with their icons: search, system apps or not, a touch opens it there.
+/// The head unit's apps with their icons: search, system apps or not, a touch opens it there. With the shared screen
+/// (LibreHU-service with root), the head unit's screen here too, and each app opened there or here (started on the head
+/// unit, its screen shown on this iPhone: for the passenger).
 struct AppsView: View {
     @StateObject private var client = BridgeClient.shared
     @State private var apps: [(pkg: String, label: String, system: Bool, icon: UIImage?)] = []
     @State private var query = ""
     @State private var system = false
     @State private var message: String?
+    @State private var choice: (pkg: String, label: String)?
+    @State private var screen = false
+
+    private var canShare: Bool { client.info.has("screen") && client.info.root }
+
+    private func launch(_ pkg: String, _ label: String, here: Bool) {
+        Task {
+            do {
+                _ = try await client.call("launch", ["pkg": pkg])
+                if here { screen = true } else { message = String(format: String(localized: "apps_started"), label) }
+            } catch { message = error.localizedDescription }
+        }
+    }
 
     var body: some View {
         ScrollView {
+            if canShare {
+                VStack(alignment: .leading, spacing: 6) {
+                    Button { screen = true } label: {
+                        Label("apps_screen", systemImage: "rectangle.on.rectangle").frame(maxWidth: .infinity)
+                    }.buttonStyle(.borderedProminent)
+                    Text("apps_screen_hint").font(.caption).foregroundStyle(.secondary)
+                }.padding(.horizontal)
+            }
             Toggle("apps_system", isOn: $system).padding(.horizontal)
             if apps.isEmpty { ProgressView().padding() }
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 84))], spacing: 16) {
                 ForEach(apps.filter { (system || !$0.system) && (query.isEmpty || $0.label.localizedCaseInsensitiveContains(query)) }, id: \.pkg) { a in
                     Button {
-                        Task {
-                            do {
-                                _ = try await client.call("launch", ["pkg": a.pkg])
-                                message = String(format: String(localized: "apps_started"), a.label)
-                            } catch { message = error.localizedDescription }
-                        }
+                        if canShare { choice = (a.pkg, a.label) } else { launch(a.pkg, a.label, here: false) }
                     } label: {
                         VStack(spacing: 6) {
                             if let i = a.icon { Image(uiImage: i).resizable().frame(width: 56, height: 56) } else { Image(systemName: "app.fill").font(.system(size: 44)) }
@@ -130,6 +148,14 @@ struct AppsView: View {
         }
         .searchable(text: $query, prompt: Text("apps_search"))
         .alert(message ?? "", isPresented: Binding(get: { message != nil }, set: { if !$0 { message = nil } })) { Button("ok") {} }
+        .confirmationDialog(choice?.label ?? "", isPresented: Binding(get: { choice != nil }, set: { if !$0 { choice = nil } }), titleVisibility: .visible) {
+            if let c = choice {
+                Button("apps_open_unit") { launch(c.pkg, c.label, here: false) }
+                Button("apps_open_here") { launch(c.pkg, c.label, here: true) }
+            }
+            Button("cancel", role: .cancel) {}
+        }
+        .fullScreenCover(isPresented: $screen) { ScreenView() }
         .task {
             guard apps.isEmpty, let a = try? await client.call("apps", timeout: 60) as? [[String: Any]] else { return }
             apps = a.map { o in (o.s("pkg"), o.s("label"), o.b("system"), (try? BridgeCrypto.unb64(o.s("icon").replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_"))).flatMap(UIImage.init(data:))) }

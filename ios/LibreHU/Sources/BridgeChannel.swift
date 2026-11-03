@@ -53,10 +53,20 @@ enum BridgeCrypto {
 protocol ByteStream: AnyObject {
     func read(_ n: Int) async throws -> Data
     func write(_ d: Data) async throws
+    /// Queued at once, in the order of the calls; `done` when it has left.
+    func enqueue(_ d: Data, done: @escaping (Error?) -> Void)
     func close()
 }
 
-/// The encrypted channel once the handshake is done: `send` / `receive` JSON objects.
+/// A frame of the head unit: a JSON object, or the bytes of a binary frame (the shared screen's video).
+enum BridgeFrame {
+    case json([String: Any])
+    case binary(Data)
+}
+
+/// The encrypted channel once the handshake is done: `send` / `receive` JSON objects, and binary frames
+/// (`receiveAny`: the head unit's screen) whose clear text starts with a 0 byte, where a JSON one starts with `{`.
+/// Each frame is numbered, sealed and queued in one step, under a lock: frames leave in the order of their numbers.
 final class BridgeChannel {
     static let maxFrame = 4 * 1024 * 1024
     private static let tagClient: UInt32 = 0x5048_4F4E // "PHON"
@@ -109,27 +119,56 @@ final class BridgeChannel {
 
     func send(_ message: [String: Any]) async throws {
         let plain = try JSONSerialization.data(withJSONObject: message)
+        try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, Error>) in
+            seal(plain) { error in
+                if let error { cont.resume(throwing: error) } else { cont.resume() }
+            }
+        }
+    }
+
+    /// Sent at once without waiting (touches of the shared screen): in the order of the calls.
+    func post(_ message: [String: Any]) {
+        guard let plain = try? JSONSerialization.data(withJSONObject: message) else { return }
+        seal(plain) { _ in }
+    }
+
+    private func seal(_ plain: Data, done: @escaping (Error?) -> Void) {
         sendLock.lock()
-        let counter = sendCounter
-        sendCounter += 1
-        sendLock.unlock()
-        let box = try AES.GCM.seal(plain, using: sendKey, nonce: AES.GCM.Nonce(data: Self.nonce(Self.tagClient, counter)))
-        try await Self.writeFrame(stream, box.ciphertext + box.tag)
+        defer { sendLock.unlock() }
+        do {
+            let counter = sendCounter
+            sendCounter += 1
+            let box = try AES.GCM.seal(plain, using: sendKey, nonce: AES.GCM.Nonce(data: Self.nonce(Self.tagClient, counter)))
+            let body = box.ciphertext + box.tag
+            var out = Data(capacity: body.count + 4)
+            withUnsafeBytes(of: UInt32(body.count).bigEndian) { out.append(contentsOf: $0) }
+            out.append(body)
+            stream.enqueue(out, done: done)
+        } catch {
+            done(error)
+        }
     }
 
     func receive() async throws -> [String: Any] {
+        guard case let .json(o) = try await receiveAny() else { throw BridgeError("not a JSON object") }
+        return o
+    }
+
+    /// The next frame: a JSON object, or a binary frame's bytes (without its 0 byte).
+    func receiveAny() async throws -> BridgeFrame {
         let frame = try await Self.readFrame(stream)
         guard frame.count >= 16 else { throw BridgeError("frame not authentic") }
         let counter = receiveCounter
         receiveCounter += 1
+        let plain: Data
         do {
             let box = try AES.GCM.SealedBox(nonce: AES.GCM.Nonce(data: Self.nonce(Self.tagServer, counter)), ciphertext: frame.prefix(frame.count - 16), tag: frame.suffix(16))
-            return try Self.parse(try AES.GCM.open(box, using: receiveKey))
-        } catch is BridgeError {
-            throw BridgeError("not a JSON object")
+            plain = try AES.GCM.open(box, using: receiveKey)
         } catch {
             throw BridgeError("frame not authentic")
         }
+        if plain.first == 0 { return .binary(Data(plain.dropFirst())) }
+        return .json(try Self.parse(plain))
     }
 
     func close() { stream.close() }

@@ -31,6 +31,10 @@ final class BridgeClient: ObservableObject {
     @Published private(set) var info = UnitInfo()
     @Published private(set) var unit: HeadUnit?
 
+    /// The shared screen's video frames and `screen` events, while ScreenView shows it.
+    var screenFrame: ((Data) -> Void)?
+    var screenEvent: (([String: Any]) -> Void)?
+
     private var channel: BridgeChannel?
     private var pending: [Int: CheckedContinuation<[String: Any], Error>] = [:]
     private var nextId = 1
@@ -122,9 +126,14 @@ final class BridgeClient: ObservableObject {
     private func readLoop(_ ch: BridgeChannel) async {
         do {
             while channel === ch {
-                let m = try await ch.receive()
+                let f = try await ch.receiveAny()
+                guard case let .json(m) = f else {
+                    if case let .binary(d) = f { screenFrame?(d) }
+                    continue
+                }
                 if let ev = m["ev"] as? String {
                     if ev == "values" { values = m["d"] as? [String: Any] ?? [:] }
+                    if ev == "screen", let d = m["d"] as? [String: Any] { screenEvent?(d) }
                     continue
                 }
                 guard let id = m["id"] as? Int, let c = pending.removeValue(forKey: id) else { continue }
@@ -159,6 +168,11 @@ final class BridgeClient: ObservableObject {
         }
         if let e = reply["e"] { throw BridgeError(e as? String ?? "error") }
         return reply["r"] ?? true
+    }
+
+    /// A request the head unit does not answer (`screen.touch`…), sent at once in the order asked.
+    func post(_ method: String, _ params: [String: Any] = [:]) {
+        channel?.post(["m": method, "p": params])
     }
 
     func disconnect() {
