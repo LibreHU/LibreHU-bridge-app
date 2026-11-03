@@ -19,6 +19,8 @@ struct HomeView: View {
     @State private var error: String?
     @State private var path: [HeadUnit] = []
     @State private var forget: HeadUnit?
+    @State private var update: Result<AppUpdate.Release, Error>?
+    @State private var checking = false
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -59,6 +61,33 @@ struct HomeView: View {
                         Label { VStack(alignment: .leading) { Text("pair_qr"); Text("pair_qr_sub").font(.caption).foregroundStyle(.secondary) } } icon: { Image(systemName: "qrcode.viewfinder") }
                     }.disabled(busy)
                     Text("wifi_only").font(.footnote).foregroundStyle(.secondary)
+                }
+                // This app's version, and a check of GitHub for a newer one (the CI's latest-ios), to download it.
+                Section("update_title") {
+                    Text(String(format: String(localized: "update_installed"), AppUpdate.installedName, AppUpdate.installedBuild))
+                    if let update {
+                        switch update {
+                        case let .success(r) where r.newer:
+                            Text(String(format: String(localized: "update_available"), r.name, r.build)).foregroundStyle(.tint)
+                            Link(destination: r.ipa) { Label("update_download", systemImage: "arrow.down.circle") }
+                        case .success:
+                            Text("update_none")
+                        case let .failure(e):
+                            Text(String(format: String(localized: "update_failed"), e.localizedDescription)).foregroundStyle(.red)
+                        }
+                    }
+                    Button {
+                        checking = true
+                        Task {
+                            do { update = .success(try await AppUpdate.latest()) } catch { update = .failure(error) }
+                            checking = false
+                        }
+                    } label: {
+                        HStack {
+                            Label("update_check", systemImage: "arrow.triangle.2.circlepath")
+                            if checking { Spacer(); ProgressView() }
+                        }
+                    }.disabled(checking)
                 }
             }
             .navigationTitle("LibreHU")

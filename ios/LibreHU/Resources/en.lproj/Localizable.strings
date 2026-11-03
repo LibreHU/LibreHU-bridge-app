@@ -107,3 +107,10 @@
 "obd_throttle" = "Throttle";
 "obd_fuel_level" = "Fuel";
 "obd_fuel_rate" = "Consumption";
+"update_title" = "App updates";
+"update_installed" = "Installed: %@ (build %ld)";
+"update_check" = "Check for a new version";
+"update_none" = "Up to date: no newer version on GitHub.";
+"update_available" = "New version on GitHub: %@ (build %ld)";
+"update_download" = "Download the .ipa (install it with AltStore or Sideloadly)";
+"update_failed" = "GitHub not reachable: %@";

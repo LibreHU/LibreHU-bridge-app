@@ -6,7 +6,9 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -85,6 +87,7 @@ import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.LocalGasStation
 import androidx.compose.material.icons.outlined.Phone
+import androidx.compose.material.icons.outlined.SystemUpdate
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -143,7 +146,9 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.put
+import org.librehu.bridge.BuildConfig
 import org.librehu.bridge.R
+import org.librehu.bridge.data.AppUpdate
 import org.librehu.bridge.data.AutoVisibility
 import org.librehu.bridge.data.BridgeClient
 import org.librehu.bridge.data.HeadUnit
@@ -290,6 +295,7 @@ private fun HomeScreen(open: (HeadUnit) -> Unit) {
             }
         }
         item { AndroidAutoCard() }
+        item { UpdateCard() }
     }
     btList?.let { list ->
         AlertDialog(
@@ -450,6 +456,46 @@ internal fun StatusBanner(
  * Android Auto lists a Car App Library app only when a trusted store installed it ([AutoVisibility]): shown with the
  * ways to get there (root on the phone, or adb from a computer).
  */
+/** This app's version, and a check of GitHub for a newer one (the CI's release of this edition), to download it. */
+@Composable
+private fun UpdateCard() {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var checking by remember { mutableStateOf(false) }
+    var result by remember { mutableStateOf<Result<AppUpdate.Release>?>(null) }
+    val c = MaterialTheme.colorScheme
+    Card(shape = MaterialTheme.shapes.large, modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Icon(Icons.Outlined.SystemUpdate, null, tint = c.primary)
+                Text(stringResource(R.string.update_title), style = MaterialTheme.typography.titleMedium)
+            }
+            Text(stringResource(R.string.update_installed, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE), style = MaterialTheme.typography.bodyMedium)
+            result
+                ?.onSuccess { r ->
+                    if (r.newer) {
+                        Text(stringResource(R.string.update_available, r.versionName, r.versionCode), style = MaterialTheme.typography.bodyMedium, color = c.primary)
+                        Button(onClick = {
+                            runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(r.apkUrl))) }
+                                .onFailure { Toast.makeText(context, it.message, Toast.LENGTH_LONG).show() }
+                        }) { Text(stringResource(R.string.update_download)) }
+                    } else {
+                        Text(stringResource(R.string.update_none), style = MaterialTheme.typography.bodyMedium)
+                    }
+                }?.onFailure { Text(stringResource(R.string.update_failed, it.message ?: it.javaClass.simpleName), style = MaterialTheme.typography.bodyMedium, color = c.error) }
+            OutlinedButton(enabled = !checking, onClick = {
+                checking = true
+                scope.launch {
+                    result = runCatching { withContext(Dispatchers.IO) { AppUpdate.latest() } }
+                    checking = false
+                }
+            }) {
+                if (checking) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp) else Text(stringResource(R.string.update_check))
+            }
+        }
+    }
+}
+
 @Composable
 private fun AndroidAutoCard() {
     val context = LocalContext.current

@@ -95,7 +95,10 @@ Puis Android Auto → Personnaliser le lanceur → cocher LibreHU. Désinstaller
 
 Interface Material 3 aux couleurs LibreHU (bleu, thème clair / sombre du téléphone), transitions entre écrans.
 
-- Autoradios associés (oublier), association par QR code ou Bluetooth.
+- Autoradios associés (oublier), association par QR code ou Bluetooth ; **mises à jour de l'appli** : version
+  installée et recherche d'une version plus récente sur GitHub (le `release.txt` de la release de la CI,
+  `latest-<branche>` sur Android, `latest-ios` sur iPhone, lu comme un téléchargement : sans la limite de l'API
+  GitHub), puis le lien de l'APK (Android) ou de l'ipa (iPhone, à installer avec AltStore ou Sideloadly).
 - Un autoradio, en cinq onglets (barre du bas) :
   - **Accueil** : batterie de la voiture (anneau de charge ou de tension), **GPS** comme sur le launcher (icône et
     couleurs : recherche en jaune, position en vert ; satellites utilisés / visibles sur un anneau, chaque

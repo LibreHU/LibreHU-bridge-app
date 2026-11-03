@@ -107,3 +107,10 @@
 "obd_throttle" = "Papillon";
 "obd_fuel_level" = "Carburant";
 "obd_fuel_rate" = "Consommation";
+"update_title" = "Mises à jour de l'appli";
+"update_installed" = "Installée : %@ (build %ld)";
+"update_check" = "Rechercher une nouvelle version";
+"update_none" = "À jour : pas de version plus récente sur GitHub.";
+"update_available" = "Nouvelle version sur GitHub : %@ (build %ld)";
+"update_download" = "Télécharger l'ipa (à installer avec AltStore ou Sideloadly)";
+"update_failed" = "GitHub injoignable : %@";

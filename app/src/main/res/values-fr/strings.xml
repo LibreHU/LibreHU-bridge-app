@@ -57,6 +57,13 @@
     <string name="settings">Réglages</string>
     <string name="copy">Copier</string>
     <string name="copied">Copié</string>
+    <string name="update_title">Mises à jour de l\'appli</string>
+    <string name="update_installed">Installée : %1$s (build %2$d)</string>
+    <string name="update_check">Rechercher une nouvelle version</string>
+    <string name="update_none">À jour : pas de version plus récente sur GitHub.</string>
+    <string name="update_available">Nouvelle version sur GitHub : %1$s (build %2$d)</string>
+    <string name="update_download">Télécharger l\'APK</string>
+    <string name="update_failed">GitHub injoignable : %1$s</string>
     <string name="aa_title">Android Auto</string>
     <string name="aa_ok">Installée par Google Play : l\'appli apparaît dans le lanceur d\'Android Auto (catégorie « IoT »).</string>
     <string name="aa_hidden">Android Auto ne l\'affichera pas : installée par « %1$s ». Une appli faite avec la bibliothèque Car App n\'apparaît que si elle vient d\'une source de confiance (Google Play), même avec les options développeur et « Sources inconnues » d\'Android Auto : ce réglage ne vaut que pour les applis média, messagerie et à l\'arrêt.</string>

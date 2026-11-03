@@ -30,6 +30,8 @@ android {
         targetSdk = 35
         versionCode = git("rev-list", "--count", "HEAD")?.toIntOrNull() ?: 1
         versionName = (git("describe", "--tags", "--always", "--dirty", "--exclude", "latest-*", "--exclude", "build-*") ?: "dev") + "-" + branchName()
+        // Edition (branch) of this build: its rolling release latest-<branch> holds the newer versions (AppUpdate).
+        buildConfigField("String", "BRANCH", "\"${branchName()}\"")
     }
     // One signing key for every LibreHU app, so that updates install over each other: LIBREHU_KEYSTORE* from the CI
     // secrets when set, else keystore/librehu.jks of the repository (public, like Android's debug key).
@@ -60,6 +62,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     lint {
