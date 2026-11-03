@@ -105,7 +105,10 @@ Interface Material 3 aux couleurs LibreHU (bleu, thème clair / sombre du télé
   - **Réglages** : toutes les pages de LibreHU-service et de chaque appli LibreHU, rangées par appli, et une
     **recherche dans tous les réglages** (toutes les pages lues à la première lettre) ;
   - **Applis** : les applis de l'autoradio en grille avec leurs icônes, recherche, applis système en option ; un
-    appui l'ouvre sur l'autoradio ;
+    appui l'ouvre sur l'autoradio, ou **ici** ; **Écran de l'autoradio ici** : pour le passager, l'écran de
+    l'autoradio sur le téléphone, à toucher d'ici (plusieurs doigts ; Retour, Accueil, applis récentes ; le téléphone
+    peut tourner), l'autoradio garde son écran pour le conducteur. Wi-Fi et root sur l'autoradio ; vidéo H.264
+    décodée par le téléphone, partage arrêté en quittant l'écran ;
   - **Fichiers** : stockage interne, clés USB / cartes SD (tout le système seulement si l'autoradio l'autorise, avec
     un avertissement), dossiers d'abord ; enregistrer un fichier sur le téléphone (sélecteur d'Android), envoyer un
     fichier du téléphone, renommer, supprimer, nouveau dossier ; transferts par blocs de 512 Kio avec progression,
@@ -132,6 +135,7 @@ signature LibreHU (la même pour toutes les applis LibreHU) est `keystore/libreh
 changeait à chaque build : désinstaller une fois l'appli avant d'installer celle-ci (l'association est à refaire).
 
 Bibliothèques : Jetpack Compose, Car App Library, kotlinx.serialization, zxing-android-embedded (Apache 2.0).
+L'écran partagé reprend sur l'autoradio la méthode de [scrcpy](https://github.com/Genymobile/scrcpy) (Apache 2.0).
 
 ## Optimisation (R8)
 

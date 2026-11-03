@@ -22,6 +22,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.DirectionsCar
+import androidx.compose.material.icons.filled.PhoneAndroid
+import androidx.compose.material.icons.filled.ScreenShare
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FilledTonalButton
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.librehu.bridge.data.LinkState
+import org.librehu.bridge.data.UnitInfo
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
@@ -70,12 +79,34 @@ private class RemoteApp(
 /** Apps of the head unit, read once per visit (icons included), kept while the app runs. */
 private var cache: List<RemoteApp>? = null
 
-/** The head unit's apps in a grid with their icons: search, system apps shown or not, a touch starts it there. */
+/**
+ * The head unit's apps in a grid with their icons: search, system apps shown or not, a touch starts it there. With
+ * the shared screen (LibreHU-service with root, Wi-Fi link), the head unit's screen here too, and each app opened
+ * there or here (started on the head unit, its screen shown on this phone: for the passenger).
+ */
 @Composable
-fun AppsTab() {
+fun AppsTab(info: UnitInfo?) {
     val context = LocalContext.current
     val client = BridgeClient.get(context)
     val scope = rememberCoroutineScope()
+    val link by client.state.collectAsStateWithLifecycle()
+    val canShare = info?.has("screen") == true && info.root && (link as? LinkState.Connected)?.via?.startsWith("Wi-Fi") == true
+    var menu by remember { mutableStateOf<String?>(null) }
+    fun launch(
+        a: RemoteApp,
+        here: Boolean,
+    ) {
+        scope.launch {
+            runCatching { Remote.simple(client, "launch", "pkg" to a.pkg) }
+                .onSuccess {
+                    if (here) {
+                        ScreenActivity.open(context)
+                    } else {
+                        Toast.makeText(context, context.getString(R.string.apps_started, a.label), Toast.LENGTH_SHORT).show()
+                    }
+                }.onFailure { Toast.makeText(context, it.message, Toast.LENGTH_LONG).show() }
+        }
+    }
     var apps by remember { mutableStateOf(cache) }
     var reload by remember { mutableIntStateOf(0) }
     var error by remember { mutableStateOf("") }
@@ -111,6 +142,13 @@ fun AppsTab() {
     ) {
         item(span = { GridItemSpan(maxLineSpan) }) {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                if (canShare) {
+                    FilledTonalButton(onClick = { ScreenActivity.open(context) }, modifier = Modifier.fillMaxWidth()) {
+                        Icon(Icons.Default.ScreenShare, null)
+                        Text(stringResource(R.string.apps_screen), modifier = Modifier.padding(start = 8.dp))
+                    }
+                    Text(stringResource(R.string.apps_screen_hint), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
                 OutlinedTextField(
                     value = query,
                     onValueChange = { query = it },
@@ -136,16 +174,29 @@ fun AppsTab() {
             Column(
                 Modifier
                     .clip(MaterialTheme.shapes.medium)
-                    .clickable {
-                        scope.launch {
-                            runCatching { Remote.simple(client, "launch", "pkg" to a.pkg) }
-                                .onSuccess { Toast.makeText(context, context.getString(R.string.apps_started, a.label), Toast.LENGTH_SHORT).show() }
-                                .onFailure { Toast.makeText(context, it.message, Toast.LENGTH_LONG).show() }
-                        }
-                    }.padding(6.dp),
+                    .clickable { if (canShare) menu = a.pkg else launch(a, here = false) }
+                    .padding(6.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
+                DropdownMenu(expanded = menu == a.pkg, onDismissRequest = { menu = null }) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.apps_open_unit)) },
+                        leadingIcon = { Icon(Icons.Default.DirectionsCar, null) },
+                        onClick = {
+                            menu = null
+                            launch(a, here = false)
+                        },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.apps_open_here)) },
+                        leadingIcon = { Icon(Icons.Default.PhoneAndroid, null) },
+                        onClick = {
+                            menu = null
+                            launch(a, here = true)
+                        },
+                    )
+                }
                 if (a.icon != null) {
                     Image(a.icon, null, Modifier.size(56.dp))
                 } else {

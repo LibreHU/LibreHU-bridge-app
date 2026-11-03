@@ -8,6 +8,7 @@ import android.os.Build
 import android.util.Log
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -66,6 +67,24 @@ class BridgeClient private constructor(
     /** Last `values` event (OBD, battery, car values…). */
     private val _values = MutableStateFlow<JsonObject?>(null)
     val values: StateFlow<JsonObject?> = _values.asStateFlow()
+
+    /** Receives the shared screen's video frames and `screen` events ([org.librehu.bridge.ui.ScreenActivity]). */
+    interface ScreenSink {
+        fun frame(data: ByteArray)
+
+        fun event(d: JsonObject)
+    }
+
+    /** Set while the head unit's screen is shown. */
+    @Volatile
+    var screenSink: ScreenSink? = null
+
+    /**
+     * Every request leaves from this one thread, in the order asked: a `screen.stop` then a `screen.start` reach the
+     * head unit in that order, the touches too.
+     */
+    private val poster = java.util.concurrent.Executors.newSingleThreadExecutor()
+    private val sender = poster.asCoroutineDispatcher()
 
     private val lock = Mutex()
     private var channel: BridgeChannel? = null
@@ -186,7 +205,7 @@ class BridgeClient private constructor(
         val answer = CompletableDeferred<JsonObject>()
         pending[id] = answer
         return try {
-            withContext(Dispatchers.IO) {
+            withContext(sender) {
                 ch.send(
                     buildJsonObject {
                         put("id", id)
@@ -200,6 +219,24 @@ class BridgeClient private constructor(
             r["r"] ?: JsonPrimitive(true)
         } finally {
             pending.remove(id)
+        }
+    }
+
+    /** A request the head unit does not answer (`screen.touch`…); dropped when not connected. */
+    fun post(
+        method: String,
+        params: JsonObject,
+    ) {
+        val ch = channel ?: return
+        poster.execute {
+            runCatching {
+                ch.send(
+                    buildJsonObject {
+                        put("m", method)
+                        put("p", params)
+                    },
+                )
+            }
         }
     }
 
@@ -230,9 +267,17 @@ class BridgeClient private constructor(
     private fun readLoop(ch: BridgeChannel) {
         try {
             while (channel === ch) {
-                val m = ch.receive()
+                val f = ch.receiveAny()
+                if (f is ByteArray) {
+                    screenSink?.frame(f)
+                    continue
+                }
+                val m = f as JsonObject
                 if (m["ev"] != null) {
-                    if (m.str("ev") == "values") _values.value = m["d"] as? JsonObject
+                    when (m.str("ev")) {
+                        "values" -> _values.value = m["d"] as? JsonObject
+                        "screen" -> (m["d"] as? JsonObject)?.let { screenSink?.event(it) }
+                    }
                     continue
                 }
                 val id = (m["id"] as? JsonPrimitive)?.intOrNull ?: continue

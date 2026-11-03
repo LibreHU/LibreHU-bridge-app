@@ -96,6 +96,16 @@
     <string name="apps_search">Search an app</string>
     <string name="apps_system">System apps</string>
     <string name="apps_started">%1$s started on the head unit</string>
+    <string name="apps_screen">Head unit screen here</string>
+    <string name="apps_screen_hint">The head unit\'s screen on this phone, touched from here: for the passenger (Wi-Fi, root on the head unit).</string>
+    <string name="apps_open_unit">Open on the head unit</string>
+    <string name="apps_open_here">Open here</string>
+    <string name="screen_title">Head unit screen</string>
+    <string name="screen_ended">Screen sharing ended</string>
+    <string name="screen_back">Back</string>
+    <string name="screen_home">Home</string>
+    <string name="screen_recents">Recent apps</string>
+    <string name="screen_close">Close</string>
     <string name="files_cancelled">%1$s: cancelled</string>
     <string name="files_downloaded">%1$s saved on the phone</string>
     <string name="files_uploaded">%1$s sent to the head unit</string>

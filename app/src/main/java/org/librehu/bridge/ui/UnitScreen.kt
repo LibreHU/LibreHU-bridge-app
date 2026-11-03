@@ -90,7 +90,7 @@ fun UnitScreen(
                 when (t) {
                     UnitTab.HOME -> Dashboard(info, state is LinkState.Connected)
                     UnitTab.SETTINGS -> SettingsTab(state is LinkState.Connected, info, openPage)
-                    UnitTab.APPS -> AppsTab()
+                    UnitTab.APPS -> AppsTab(info)
                     UnitTab.FILES -> FilesTab(info)
                     UnitTab.TOOLS -> ToolsTab(info, unit)
                 }

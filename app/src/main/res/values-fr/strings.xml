@@ -96,6 +96,16 @@
     <string name="apps_search">Chercher une appli</string>
     <string name="apps_system">Applis système</string>
     <string name="apps_started">%1$s ouverte sur l\'autoradio</string>
+    <string name="apps_screen">Écran de l\'autoradio ici</string>
+    <string name="apps_screen_hint">L\'écran de l\'autoradio sur ce téléphone, à toucher d\'ici : pour le passager (Wi-Fi, root sur l\'autoradio).</string>
+    <string name="apps_open_unit">Ouvrir sur l\'autoradio</string>
+    <string name="apps_open_here">Ouvrir ici</string>
+    <string name="screen_title">Écran de l\'autoradio</string>
+    <string name="screen_ended">Partage de l\'écran terminé</string>
+    <string name="screen_back">Retour</string>
+    <string name="screen_home">Accueil</string>
+    <string name="screen_recents">Applis récentes</string>
+    <string name="screen_close">Fermer</string>
     <string name="files_cancelled">%1$s : annulé</string>
     <string name="files_downloaded">%1$s enregistré sur le téléphone</string>
     <string name="files_uploaded">%1$s envoyé sur l\'autoradio</string>

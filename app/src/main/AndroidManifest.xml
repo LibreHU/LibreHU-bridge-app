@@ -37,6 +37,14 @@
             </intent-filter>
         </activity>
 
+        <!-- The head unit's screen on the phone (ui/ScreenActivity): turning the phone keeps the share going. -->
+        <activity
+            android:name=".ui.ScreenActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|uiMode"
+            android:exported="false"
+            android:label="@string/screen_title"
+            android:theme="@android:style/Theme.Material.NoActionBar.Fullscreen" />
+
         <!-- QR scanner of zxing-android-embedded, in portrait. -->
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
