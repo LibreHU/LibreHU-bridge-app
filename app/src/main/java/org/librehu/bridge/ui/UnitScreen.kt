@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Tune
@@ -38,7 +39,7 @@ import org.librehu.bridge.data.LinkState
 import org.librehu.bridge.data.Remote
 import org.librehu.bridge.data.UnitInfo
 
-/** The five parts of a head unit's screen, in the bottom bar. */
+/** The parts of a head unit's screen in the bottom bar, then the app's Infos. */
 enum class UnitTab(
     val label: Int,
     val icon: ImageVector,
@@ -50,6 +51,7 @@ enum class UnitTab(
     APPS(R.string.tab_apps, Icons.Default.Apps, "apps"),
     FILES(R.string.tab_files, Icons.Default.Folder, "files"),
     TOOLS(R.string.tab_tools, Icons.Default.Build, "reboot"),
+    INFO(R.string.info_title, Icons.Default.Info, null),
 }
 
 /** Tab shown, kept while a settings page is open over the head unit's screen. */
@@ -93,6 +95,7 @@ fun UnitScreen(
                     UnitTab.APPS -> AppsTab(info)
                     UnitTab.FILES -> FilesTab(info)
                     UnitTab.TOOLS -> ToolsTab(info, unit)
+                    UnitTab.INFO -> InfoContent()
                 }
             }
         }
