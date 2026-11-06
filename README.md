@@ -159,6 +159,30 @@ but non lucratif, dons récurrents) :
 [![Faire un don avec Liberapay](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/DokT/donate)
 [![Donateurs sur Liberapay](https://img.shields.io/liberapay/patrons/DokT.svg?logo=liberapay)](https://liberapay.com/DokT/)
 
+## Licence
+
+Copyright (C) 2026 les contributeurs de LibreHU.
+
+Le code de ce dépôt est sous **GNU AGPL v3 ou ultérieure** (`AGPL-3.0-or-later`, fichier [`LICENSE`](LICENSE)), avec les
+[termes additionnels](LICENSE-ADDITIONAL-TERMS.md) de son article 7 : garder la mention « Basé sur LibreHU –
+https://github.com/LibreHU » et marquer une version modifiée comme telle. Qui distribue une version modifiée, ou la
+fait utiliser à distance, doit en donner le code source complet sous la même licence.
+
+### Code, ressources et données d'autres projets
+
+Ils gardent leur licence.
+
+| Quoi | Où | Auteur | Licence |
+|---|---|---|---|
+| Car App Library (Android Auto) | bibliothèque | Google | Apache-2.0 |
+| [zxing-android-embedded](https://github.com/journeyapps/zxing-android-embedded) et ZXing core | bibliothèques (lecture du code QR) | JourneyApps, les auteurs de ZXing | Apache-2.0 |
+| kotlinx.serialization | bibliothèque | JetBrains | Apache-2.0 |
+| Jetpack Compose, Material 3 et ses icônes, AndroidX (Activity, Core, Lifecycle) | bibliothèques | Google, The Android Open Source Project | Apache-2.0 |
+| Kotlin, kotlinx.coroutines | bibliothèques | JetBrains | Apache-2.0 |
+| Enveloppe Gradle | `gradlew`, `gradlew.bat`, `gradle/wrapper/` | Gradle | Apache-2.0 |
+
+L'appli iPhone (`ios/`) n'utilise que les bibliothèques d'Apple (SwiftUI, UIKit, AVFoundation, CryptoKit, Network…).
+
 ## Contact
 
 [librehu@proton.me](mailto:librehu@proton.me)
