@@ -141,6 +141,15 @@ changeait à chaque build : désinstaller une fois l'appli avant d'installer cel
 Bibliothèques : Jetpack Compose, Car App Library, kotlinx.serialization, zxing-android-embedded (Apache 2.0).
 L'écran partagé reprend sur l'autoradio la méthode de [scrcpy](https://github.com/Genymobile/scrcpy) (Apache 2.0).
 
+## Langues
+
+Anglais et français, plus 18 langues traduites par IA (Claude), sans relecture par des natifs pour l'instant :
+espagnol, italien, portugais (Portugal et Brésil), néerlandais, tchèque, roumain, russe, ukrainien, turc, coréen,
+chinois (simplifié et traditionnel), vietnamien, thaï, hindi, indonésien et géorgien, dans l'appli Android
+(`app/src/main/res/values-<langue>/strings.xml`) comme dans l'appli iPhone
+(`ios/LibreHU/Resources/<langue>.lproj/Localizable.strings`). Les applis suivent la langue du téléphone. Corrections
+bienvenues.
+
 ## Optimisation (R8)
 
 L'APK publié par la CI (`assembleRelease`) est **optimisé par R8** : code et ressources réduits et optimisés, ce qui
